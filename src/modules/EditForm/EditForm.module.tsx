@@ -1,7 +1,5 @@
 import { useState, MouseEvent } from 'react';
-import { DescriptionInput } from './components/DescriptionInput';
-import { TaskNameInput } from './components/TaskNameInput/TaskNameInput';
-import { Checkbox } from 'components/index';
+import { TextField, Checkbox } from 'components/index';
 
 export const EditForm = () => {
   const [taskNameInputValue, setTaskNameInputValue] = useState<string>('');
@@ -18,11 +16,11 @@ export const EditForm = () => {
   };
 
   const onChangeImportantCheckboxValue = (value: boolean) => {
-    setCheckboxImportantValue(value);
+    setCheckboxImportantValue(!value);
   };
 
   const onChangeCompletedCheckboxValue = (value: boolean) => {
-    setCheckboxCompletedValue(value);
+    setCheckboxCompletedValue(!value);
   };
 
   const onSubmit = (evt: MouseEvent<HTMLButtonElement>) => {
@@ -37,21 +35,22 @@ export const EditForm = () => {
 
   return (
     <form className="edit-form d-flex flex-column align-items-center justify-content-center">
-      <TaskNameInput onChange={onInputTaskName} value={taskNameInputValue} />
-      <DescriptionInput onChange={onInputTaskDescription} value={taskDescriptionInputValue} />
+      <TextField inputType="text" label="Task name" placeholder="Clean room" onChange={onInputTaskName} />
+      <TextField
+        inputType="text"
+        label={'Task description'}
+        placeholder="Clean my room"
+        onChange={onInputTaskDescription}
+      />
       <Checkbox
         label="Important"
         checked={checkboxImportantChecked}
-        value={'1'}
-        id="Important"
-        onChange={onChangeImportantCheckboxValue}
+        onChange={() => onChangeImportantCheckboxValue(checkboxImportantChecked)}
       />
       <Checkbox
         label="Completed"
         checked={checkboxCompletedChecked}
-        value={'2'}
-        id="Completed"
-        onChange={onChangeCompletedCheckboxValue}
+        onChange={() => onChangeCompletedCheckboxValue(checkboxCompletedChecked)}
       />
       <button type="submit" className="btn btn-secondary d-block edit-task-button w-100" onClick={onSubmit}>
         Edit task

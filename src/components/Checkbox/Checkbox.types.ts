@@ -1,9 +1,9 @@
+import { ChangeEventHandler } from 'react';
+
 export interface CheckboxProps {
   label: string;
-  checked: boolean;
-  value: string;
-  id: string;
-  onChange: (value: boolean) => void;
+  checked?: boolean;
+  onChange: (isChecked: boolean) => void;
   containerClassName?: string;
   disabled?: boolean;
 }
