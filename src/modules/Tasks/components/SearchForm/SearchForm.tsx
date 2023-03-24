@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, MouseEvent } from 'react';
 
 import './SearchForm.css';
 
@@ -23,11 +23,17 @@ export const SearchForm = () => {
     setfilterType(type);
   };
 
+  const onSubmit = (evt: MouseEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
+    setSearchValue('');
+    setfilterType(FILTER_TYPES.ALL);
+  };
+
   return (
     <form className="search-form d-flex justify-content-between">
       <SearchInput value={searchValue} onChange={onSearchInputChange} onReset={onResetInputValue} />
       <StatusFilter tasksType={filterType} onChange={onFilterChange} />
-      <button type="button" className="btn btn-primary">
+      <button type="button" className="btn btn-primary" onClick={onSubmit}>
         Find
       </button>
     </form>
