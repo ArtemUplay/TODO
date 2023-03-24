@@ -1,11 +1,11 @@
 import { useState, MouseEvent } from 'react';
+import { FormData } from './AddTaskForm.types';
 import { TextField, Checkbox } from 'components/index';
 
-export const EditForm = () => {
+export const AddTaskForm = () => {
   const [taskNameInputValue, setTaskNameInputValue] = useState<string>('');
   const [taskDescriptionInputValue, setTaskDescriptionInputValue] = useState<string>('');
-  const [checkboxImportantChecked, setCheckboxImportantValue] = useState<boolean>(true);
-  const [checkboxCompletedChecked, setCheckboxCompletedValue] = useState<boolean>(false);
+  const [checkboxImportantChecked, setCheckboxImportantValue] = useState<boolean>(false);
 
   const onInputTaskName = (value: string) => {
     setTaskNameInputValue(value);
@@ -19,17 +19,12 @@ export const EditForm = () => {
     setCheckboxImportantValue(!value);
   };
 
-  const onChangeCompletedCheckboxValue = (value: boolean) => {
-    setCheckboxCompletedValue(!value);
-  };
-
   const onSubmit = (evt: MouseEvent<HTMLButtonElement>) => {
     evt.preventDefault();
     console.log({
       taskNameInputValue,
       taskDescriptionInputValue,
       checkboxImportantChecked,
-      checkboxCompletedChecked,
     });
   };
 
@@ -44,8 +39,8 @@ export const EditForm = () => {
       />
       <TextField
         inputType="text"
-        value={taskDescriptionInputValue}
         label={'What to do(description)'}
+        value={taskDescriptionInputValue}
         placeholder="Clean my room"
         onChange={onInputTaskDescription}
       />
@@ -54,13 +49,8 @@ export const EditForm = () => {
         checked={checkboxImportantChecked}
         onChange={() => onChangeImportantCheckboxValue(checkboxImportantChecked)}
       />
-      <Checkbox
-        label="Completed"
-        checked={checkboxCompletedChecked}
-        onChange={() => onChangeCompletedCheckboxValue(checkboxCompletedChecked)}
-      />
       <button type="submit" className="btn btn-secondary d-block edit-task-button w-100" onClick={onSubmit}>
-        Edit task
+        Add task
       </button>
     </form>
   );
