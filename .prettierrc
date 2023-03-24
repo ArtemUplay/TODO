@@ -9,5 +9,5 @@
   "semi": true,
   "arrowParens": "always",
   "bracketSameLine": true,
-  "endOfLine": "auto"
+  "endOfLine": "lf"
 }
