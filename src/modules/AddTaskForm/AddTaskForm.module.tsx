@@ -3,7 +3,7 @@ import { FormData } from './AddTaskForm.types';
 import { TextField, Checkbox } from 'components/index';
 
 export const AddTaskForm = () => {
-  const [taskNameInputValue, setTaskNameInputValue] = useState<string>('');
+  const [taskNameInputValue, setTaskNameInputValue] = useState<string>();
   const [taskDescriptionInputValue, setTaskDescriptionInputValue] = useState<string>('');
   const [checkboxImportantChecked, setCheckboxImportantValue] = useState<boolean>(false);
 

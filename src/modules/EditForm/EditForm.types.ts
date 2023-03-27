@@ -4,3 +4,11 @@ export interface FormData {
   checkboxImportantChecked: boolean;
   checkboxCompletedChecked: boolean;
 }
+
+export interface Data {
+  name: string;
+  id: string;
+  info: string;
+  isImportant: boolean;
+  isDone: boolean;
+}

@@ -1,1 +1,1 @@
-export * from './AddTaskForm';
+export * from './AddTaskForm.module';

@@ -1,11 +1,15 @@
 import { useState, MouseEvent } from 'react';
+import { Data } from './EditForm.types';
 import { TextField, Checkbox } from 'components/index';
+import { TasksMock } from '__mocks__/index';
 
 export const EditForm = () => {
-  const [taskNameInputValue, setTaskNameInputValue] = useState<string>('');
-  const [taskDescriptionInputValue, setTaskDescriptionInputValue] = useState<string>('');
-  const [checkboxImportantChecked, setCheckboxImportantValue] = useState<boolean>(true);
-  const [checkboxCompletedChecked, setCheckboxCompletedValue] = useState<boolean>(false);
+  const data: Data = TasksMock[0];
+
+  const [taskNameInputValue, setTaskNameInputValue] = useState<string>(data.name);
+  const [taskDescriptionInputValue, setTaskDescriptionInputValue] = useState<string>(data.info);
+  const [checkboxImportantChecked, setCheckboxImportantValue] = useState<boolean>(data.isImportant);
+  const [checkboxCompletedChecked, setCheckboxCompletedValue] = useState<boolean>(data.isDone);
 
   const onInputTaskName = (value: string) => {
     setTaskNameInputValue(value);
