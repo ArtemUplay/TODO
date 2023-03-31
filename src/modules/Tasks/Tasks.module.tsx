@@ -1,13 +1,21 @@
+import { useEffect } from 'react';
+import { observer } from 'mobx-react';
 import { TasksStats, TasksList } from './components';
 import { SearchForm } from './components/SearchForm';
-import { TasksMock, TasksStatsMock } from '__mocks__/index';
+import { TasksStoreInstance } from './store';
 
-export function Tasks() {
+function TasksProto() {
+  useEffect(() => {
+    TasksStoreInstance.loadTasks();
+  }, []);
+
   return (
     <>
       <SearchForm />
-      <TasksStats {...TasksStatsMock} />
-      <TasksList tasks={TasksMock} />
+      <TasksStats />
+      <TasksList />
     </>
   );
 }
+
+export const Tasks = observer(TasksProto);

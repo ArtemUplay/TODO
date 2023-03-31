@@ -1,3 +1,3 @@
 export * from './TasksPage';
-export * from './EditPage';
+export * from './TaskEditPage';
 export * from './AddTaskPage';

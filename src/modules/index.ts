@@ -1,3 +1,3 @@
 export * from './Tasks';
-export * from './EditForm';
-export * from './AddTaskForm';
+export * from './TaskEditForm';
+export * from './TaskAddForm';
