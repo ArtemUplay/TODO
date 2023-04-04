@@ -1,63 +1,96 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { useNavigate } from 'react-router-dom';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { AddTaskFormStoreInstance } from './store/index';
+import { validationSchema } from './TaskAddForm.schema';
 import { TextField, Checkbox, Loader } from 'components/index';
 import { ROOT } from 'constants/index';
+import { TaskAddFormEntity } from 'domains/index';
 
 const AddTaskFormProto = () => {
   const { isLoading, loadPage, changeTaskImportance } = AddTaskFormStoreInstance;
   const navigate = useNavigate();
 
-  const [taskNameInputValue, setTaskNameInputValue] = useState<string>();
-  const [taskDescriptionInputValue, setTaskDescriptionInputValue] = useState<string>('');
-  const [checkboxImportantChecked, setCheckboxImportantChecked] = useState<boolean>(false);
-
-  const onInputTaskName = (value: string) => {
-    setTaskNameInputValue(value);
+  const defaultValues: TaskAddFormEntity = {
+    taskName: '',
+    taskDescription: '',
+    checkboxImportant: false,
   };
 
-  const onInputTaskDescription = (value: string) => {
-    setTaskDescriptionInputValue(value);
-  };
+  const { handleSubmit, control, setValue } = useForm({
+    defaultValues: defaultValues,
+    resolver: yupResolver(validationSchema),
+  });
 
-  const onChangeImportantCheckboxValue = (value: boolean) => {
-    setCheckboxImportantChecked(!value);
-  };
+  const onInputTaskName = useCallback((value: string) => {
+    setValue('taskName', value);
+  }, []);
 
-  const onSubmit = async (evt: FormEvent<HTMLFormElement>) => {
+  const onInputTaskDescription = useCallback((value: string) => {
+    setValue('taskDescription', value);
+  }, []);
+
+  const onChangeImportantCheckboxValue = useCallback((isChecked: boolean) => {
+    setValue('checkboxImportant', isChecked);
+  }, []);
+
+  const submitHandler = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    await loadPage();
-    console.log({
-      taskNameInputValue,
-      taskDescriptionInputValue,
-      checkboxImportantChecked,
-    });
-    navigate(ROOT);
+
+    handleSubmit(async (data: TaskAddFormEntity) => {
+      console.log(data);
+      await loadPage();
+      navigate(ROOT);
+    })();
   };
 
   return (
-    <form className="edit-form d-flex flex-column align-items-center justify-content-center" onSubmit={onSubmit}>
+    <form className="edit-form d-flex flex-column align-items-center justify-content-center" onSubmit={submitHandler}>
       <Loader isLoading={isLoading} variant="circle">
-        <TextField
-          inputType="text"
-          value={taskNameInputValue}
-          label="Task name"
-          placeholder="Clean room"
-          onChange={onInputTaskName}
+        <Controller
+          control={control}
+          name="taskName"
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <TextField
+                inputType="text"
+                value={field.value}
+                label="Task name"
+                placeholder="Clean room"
+                onChange={onInputTaskName}
+                isInvalid={error?.message ? 'is-invalid' : ''}
+              />
+              <span className="text-danger align-self-start">{error?.message}</span>
+            </>
+          )}
         />
-        <TextField
-          inputType="text"
-          label={'What to do(description)'}
-          value={taskDescriptionInputValue}
-          placeholder="Clean my room"
-          onChange={onInputTaskDescription}
+        <Controller
+          control={control}
+          name="taskDescription"
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <TextField
+                inputType="text"
+                label={'What to do(description)'}
+                value={field.value}
+                placeholder="Clean my room"
+                onChange={onInputTaskDescription}
+                isInvalid={error?.message ? 'is-invalid' : ''}
+              />
+              <span className="text-danger align-self-start">{error?.message}</span>
+            </>
+          )}
         />
-        <Checkbox
-          label="Important"
-          checked={checkboxImportantChecked}
-          onChange={() => onChangeImportantCheckboxValue(checkboxImportantChecked)}
+        <Controller
+          control={control}
+          name="checkboxImportant"
+          render={({ field }) => (
+            <Checkbox label="Important" checked={field.value} onChange={onChangeImportantCheckboxValue} />
+          )}
         />
+
         <button type="submit" className="btn btn-secondary d-block edit-task-button w-100">
           Add task
         </button>

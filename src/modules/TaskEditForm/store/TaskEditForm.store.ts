@@ -34,11 +34,11 @@ class TaskEditFormStore {
   }
 
   changeTaskImportance(taskId: TaskEntity['id'], currentStatus: boolean) {
-    console.log('important', taskId, !currentStatus);
+    console.log('important', taskId, currentStatus);
   }
 
   changeTaskCompleted(taskId: TaskEntity['id'], currentStatus: boolean) {
-    console.log('completed', taskId, !currentStatus);
+    console.log('completed', taskId, currentStatus);
   }
 
   loadPage = async () => {

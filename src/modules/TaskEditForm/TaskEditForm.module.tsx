@@ -1,11 +1,15 @@
-import { useState, FormEvent, useEffect } from 'react';
+import { FormEvent, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
-import { Data, ParamsType } from './TaskEditForm.types';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { ParamsType } from './TaskEditForm.types';
 import { TaskEditFormStoreInstance } from './store';
+import { validationSchema } from './TaskEditForm.shcema';
 import { TextField, Checkbox, Loader } from 'components/index';
 import { TasksMock } from '__mocks__/index';
 import { ROOT } from 'constants/index';
+import { TaskEditFormEntity, TaskEntity } from 'domains/index';
 
 const TaskEditFormProto = () => {
   useEffect(() => {
@@ -14,8 +18,20 @@ const TaskEditFormProto = () => {
 
   const navigate = useNavigate();
 
-  const data: Data = TasksMock[0];
+  const data: TaskEntity = TasksMock[0];
+
+  const defaultValues: TaskEditFormEntity = {
+    taskName: data.name,
+    taskDescription: data.info,
+    checkboxImportant: data.isImportant,
+    checkboxCompleted: data.isDone,
+  };
+
   const { isLoading, loadPage, changeTaskImportance, changeTaskCompleted } = TaskEditFormStoreInstance;
+  const { handleSubmit, control, setValue, watch } = useForm({
+    defaultValues: defaultValues,
+    resolver: yupResolver(validationSchema),
+  });
 
   // Получаем id у таски
   const { taskId } = useParams<ParamsType>();
@@ -25,68 +41,93 @@ const TaskEditFormProto = () => {
 
   TaskEditFormStoreInstance.setTaskId = taskId;
 
-  const [taskNameInputValue, setTaskNameInputValue] = useState<string>(data.name);
-  const [taskDescriptionInputValue, setTaskDescriptionInputValue] = useState<string>(data.info);
-  const [checkboxImportantChecked, setCheckboxImportantChecked] = useState<boolean>(data.isImportant);
-  const [checkboxCompletedChecked, setCheckboxCompletedChecked] = useState<boolean>(data.isDone);
+  const onInputTaskName = useCallback((value: string) => {
+    setValue('taskName', value);
+  }, []);
 
-  const onInputTaskName = (value: string) => {
-    setTaskNameInputValue(value);
-  };
+  const onInputTaskDescription = useCallback((value: string) => {
+    setValue('taskDescription', value);
+  }, []);
 
-  const onInputTaskDescription = (value: string) => {
-    setTaskDescriptionInputValue(value);
-  };
+  const onChangeImportantCheckboxValue = useCallback((isChecked: boolean) => {
+    setValue('checkboxImportant', isChecked);
+    changeTaskImportance(taskId, isChecked);
+  }, []);
 
-  const onChangeImportantCheckboxValue = (value: boolean) => {
-    setCheckboxImportantChecked(!value);
-    changeTaskImportance(taskId, value);
-  };
+  const onChangeCompletedCheckboxValue = useCallback((isChecked: boolean) => {
+    setValue('checkboxCompleted', isChecked);
+    changeTaskCompleted(taskId, isChecked);
+  }, []);
 
-  const onChangeCompletedCheckboxValue = (value: boolean) => {
-    setCheckboxCompletedChecked(!value);
-    changeTaskCompleted(taskId, value);
-  };
-
-  const onSubmit = async (evt: FormEvent<HTMLFormElement>) => {
+  const submitHandler = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    await loadPage();
-    console.log({
-      taskNameInputValue,
-      taskDescriptionInputValue,
-      checkboxImportantChecked,
-      checkboxCompletedChecked,
-    });
-    navigate(ROOT);
+
+    handleSubmit(async (data: TaskEditFormEntity) => {
+      await loadPage();
+      console.log(data);
+      navigate(ROOT);
+    })();
   };
 
   return (
-    <form className="edit-form d-flex flex-column align-items-center justify-content-center" onSubmit={onSubmit}>
+    <form className="edit-form d-flex flex-column align-items-center justify-content-center" onSubmit={submitHandler}>
       <Loader isLoading={isLoading} variant="circle">
-        <TextField
-          inputType="text"
-          value={taskNameInputValue}
-          label="Task name"
-          placeholder="Clean room"
-          onChange={onInputTaskName}
+        <Controller
+          control={control}
+          name="taskName"
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <TextField
+                inputType="text"
+                value={field.value}
+                label="Task name"
+                placeholder="Clean room"
+                onChange={onInputTaskName}
+                isInvalid={error?.message ? 'is-invalid' : ''}
+              />
+              <span className="text-danger align-self-start">{error?.message}</span>
+            </>
+          )}
         />
-        <TextField
-          inputType="text"
-          value={taskDescriptionInputValue}
-          label={'What to do(description)'}
-          placeholder="Clean my room"
-          onChange={onInputTaskDescription}
+
+        <Controller
+          control={control}
+          name="taskDescription"
+          render={({ field, fieldState: { error } }) => (
+            <>
+              <TextField
+                inputType="text"
+                value={field.value}
+                label={'What to do(description)'}
+                placeholder="Clean my room"
+                onChange={onInputTaskDescription}
+                isInvalid={error?.message ? 'is-invalid' : ''}
+              />
+              <span className="text-danger align-self-start">{error?.message}</span>
+            </>
+          )}
         />
-        <Checkbox
-          label="Important"
-          checked={checkboxImportantChecked}
-          onChange={() => onChangeImportantCheckboxValue(checkboxImportantChecked)}
+        <Controller
+          control={control}
+          name="checkboxImportant"
+          render={({ field }) => (
+            <Checkbox
+              label="Important"
+              checked={field.value}
+              onChange={onChangeImportantCheckboxValue}
+              disabled={watch('checkboxCompleted')}
+            />
+          )}
         />
-        <Checkbox
-          label="Completed"
-          checked={checkboxCompletedChecked}
-          onChange={() => onChangeCompletedCheckboxValue(checkboxCompletedChecked)}
+
+        <Controller
+          control={control}
+          name="checkboxCompleted"
+          render={({ field }) => (
+            <Checkbox label="Completed" checked={field.value} onChange={onChangeCompletedCheckboxValue} />
+          )}
         />
+
         <button type="submit" className="btn btn-secondary d-block edit-task-button w-100">
           Edit task
         </button>

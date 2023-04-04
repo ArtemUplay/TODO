@@ -4,4 +4,5 @@ export interface StatusFilterProps {
   disabled: boolean;
   tasksType: FiltersType;
   onChange: (tasksType: FiltersType) => void;
+  isInvalid: string;
 }

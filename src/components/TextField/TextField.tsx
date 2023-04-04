@@ -10,6 +10,7 @@ export function TextField({
   value,
   onChange,
   errorText,
+  isInvalid,
 }: TextFieldProps) {
   const onInputChange: ChangeEventHandler<HTMLInputElement> = (evt) => onChange(evt.target.value);
   return (
@@ -19,7 +20,7 @@ export function TextField({
       </label>
       <input
         type={inputType}
-        className="form-control"
+        className={`form-control ${isInvalid}`}
         id={label}
         placeholder={placeholder}
         value={value}

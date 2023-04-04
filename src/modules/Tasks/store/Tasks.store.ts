@@ -50,8 +50,6 @@ class TasksStore {
 
       await fakeApi(1000);
 
-      console.log(searchParams);
-
       this._tasks = TasksMock;
       this._tasksStats = TasksStatsMock;
     } catch {

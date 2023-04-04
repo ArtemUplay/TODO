@@ -1,52 +1,87 @@
-import { useState, MouseEvent } from 'react';
+import { FormEvent, useCallback } from 'react';
 import { observer } from 'mobx-react';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import './SearchForm.css';
 
 import { StatusFilter } from '../StatusFilter/index';
+import { validationSchema } from './SearchForm.schema';
 import { SearchInput } from 'components/index';
 import { FILTER_TYPES } from 'constants/index';
-import { FiltersType } from 'domains/index';
+import { FiltersType, SearchFormValidation } from 'domains/index';
 import { TasksStoreInstance } from 'modules/Tasks/store/index';
 
 export const SearchFormProto = () => {
   const { isTasksLoading, loadTasks } = TasksStoreInstance;
 
-  const [searchValue, setSearchValue] = useState<string>('');
-  const [filterType, setfilterType] = useState<FiltersType>(FILTER_TYPES.ALL);
-
-  const onSearchInputChange = (value: string) => {
-    setSearchValue(value);
+  const defaultValues: SearchFormValidation = {
+    searchValue: '',
+    filterType: FILTER_TYPES.ALL,
   };
 
-  const onResetInputValue = () => {
-    setSearchValue('');
+  const { handleSubmit, control, reset, setValue } = useForm<SearchFormValidation>({
+    defaultValues: defaultValues,
+    resolver: yupResolver(validationSchema),
+  });
+
+  const onSearchChange = useCallback((value: string) => {
+    setValue('searchValue', value);
+  }, []);
+
+  const onFilterTypeChange = useCallback((filterType: FiltersType) => {
+    setValue('filterType', filterType);
+  }, []);
+
+  const onResetHandler = () => {
+    setValue('searchValue', '');
   };
 
-  const onFilterChange = (type: FiltersType) => {
-    setfilterType(type);
-  };
-
-  const onSubmit = async (evt: MouseEvent<HTMLButtonElement>) => {
+  const submitHandler = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    await loadTasks({
-      searchValue,
-      filterType,
-    });
-    setSearchValue('');
-    setfilterType(FILTER_TYPES.ALL);
+    handleSubmit(async (data: SearchFormValidation) => {
+      await loadTasks({
+        searchValue: data.searchValue,
+        filterType: data.filterType,
+      });
+      reset();
+    })();
   };
 
   return (
-    <form className="search-form d-flex justify-content-between">
-      <SearchInput
-        disabled={isTasksLoading}
-        value={searchValue}
-        onChange={onSearchInputChange}
-        onReset={onResetInputValue}
+    <form className="search-form d-flex justify-content-between" onSubmit={submitHandler}>
+      <Controller
+        control={control}
+        name="searchValue"
+        render={({ field, fieldState: { error } }) => (
+          <div>
+            <SearchInput
+              disabled={isTasksLoading}
+              value={field.value}
+              onChange={onSearchChange}
+              onReset={onResetHandler}
+              isInvalid={error?.message ? 'is-invalid' : ''}
+            />
+            <div>{error?.message}</div>
+          </div>
+        )}
       />
-      <StatusFilter disabled={isTasksLoading} tasksType={filterType} onChange={onFilterChange} />
-      <button type="button" className="btn btn-primary" onClick={onSubmit}>
+      <Controller
+        control={control}
+        name="filterType"
+        render={({ field, fieldState: { error } }) => (
+          <div>
+            <StatusFilter
+              disabled={isTasksLoading}
+              tasksType={field.value}
+              onChange={onFilterTypeChange}
+              isInvalid={error?.message ? 'is-invalid' : ''}
+            />
+            <div>{error?.message}</div>
+          </div>
+        )}
+      />
+      <button type="submit" className="btn btn-primary">
         Find
       </button>
     </form>
