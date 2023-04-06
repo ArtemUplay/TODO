@@ -15,7 +15,8 @@
     "lint:styles": "stylelint ./src/**/*.css",
     "fix:styles": "stylelint --fix ./src/**/*.css",
     "lint:ts": "eslint src/**/*.{ts,tsx}",
-    "fix:ts": "eslint src/**/*.{ts,tsx} --quiet --fix"
+    "fix:ts": "eslint src/**/*.{ts,tsx} --quiet --fix",
+    "swagger-types": "npx openapi-typescript http://ovz1.j50031265.px7zm.vps.myjino.ru/swagger.json --output src/http/model/todo.swagger.ts && eslint src/http/model/todo.swagger.ts --fix --no-ignore"
   },
   "author": "",
   "license": "ISC",
@@ -129,6 +130,7 @@
     "eslint-webpack-plugin": "^3.2.0",
     "mobx": "^6.6.2",
     "mobx-react": "^7.5.3",
+    "openapi-typescript": "^5.4.1",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-hook-form": "7.37.0",

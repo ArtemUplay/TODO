@@ -1,4 +1,4 @@
-import { useState, FormEvent, useCallback } from 'react';
+import { FormEvent, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { useNavigate } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
@@ -10,7 +10,7 @@ import { ROOT } from 'constants/index';
 import { TaskAddFormEntity } from 'domains/index';
 
 const AddTaskFormProto = () => {
-  const { isLoading, loadPage, changeTaskImportance } = AddTaskFormStoreInstance;
+  const { isLoading, postNewTask } = AddTaskFormStoreInstance;
   const navigate = useNavigate();
 
   const defaultValues: TaskAddFormEntity = {
@@ -40,8 +40,7 @@ const AddTaskFormProto = () => {
     evt.preventDefault();
 
     handleSubmit(async (data: TaskAddFormEntity) => {
-      console.log(data);
-      await loadPage();
+      await postNewTask(data);
       navigate(ROOT);
     })();
   };

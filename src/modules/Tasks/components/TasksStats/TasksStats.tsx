@@ -8,24 +8,30 @@ export function TasksStatsProto() {
 
   return (
     <div className="d-flex w-100 justify-content-between">
-      <p>
-        Total:{' '}
-        <Loader isLoading={isTasksLoading} variant="circle">
-          <span className="badge bg-secondary">{tasksStats.total}</span>
-        </Loader>
-      </p>
-      <p>
-        Important:{' '}
-        <Loader isLoading={isTasksLoading} variant="circle">
-          <span className="badge bg-secondary">{tasksStats.important}</span>
-        </Loader>
-      </p>
-      <p>
-        Done:{' '}
-        <Loader isLoading={isTasksLoading} variant="circle">
-          <span className="badge bg-secondary">{tasksStats.done}</span>
-        </Loader>
-      </p>
+      {tasksStats ? (
+        <>
+          <p>
+            Total:{' '}
+            <Loader isLoading={isTasksLoading} variant="circle">
+              <span className="badge bg-secondary">{tasksStats?.total}</span>
+            </Loader>
+          </p>
+          <p>
+            Important:{' '}
+            <Loader isLoading={isTasksLoading} variant="circle">
+              <span className="badge bg-secondary">{tasksStats?.important}</span>
+            </Loader>
+          </p>
+          <p>
+            Done:{' '}
+            <Loader isLoading={isTasksLoading} variant="circle">
+              <span className="badge bg-secondary">{tasksStats?.done}</span>
+            </Loader>
+          </p>
+        </>
+      ) : (
+        <p>Статы не найдены</p>
+      )}
     </div>
   );
 }

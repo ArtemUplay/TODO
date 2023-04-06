@@ -1,6 +1,6 @@
 export interface TaskEditFormEntity {
-  taskName: string;
-  taskDescription: string;
-  checkboxImportant: boolean;
-  checkboxCompleted: boolean;
+  name: string;
+  info: string;
+  isImportant: boolean;
+  isCompleted: boolean;
 }

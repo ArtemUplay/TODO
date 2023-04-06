@@ -1,9 +1,9 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 import { SearchFormEntity, TaskEntity, TasksStatsEntity } from 'domains/index';
-import { TasksMock, TasksStatsMock } from '__mocks__/index';
-import { fakeApi } from 'helpers/index';
+import { TaskAgentInstance } from 'http/agent/index';
+import { getInternalInfo, mapToExternalParams, mapToInternalTasks } from 'helpers/mappers';
 
-type PrivateFields = '_tasks' | '_tasksStats' | '_isTasksLoading';
+type PrivateFields = '_tasks' | '_tasksStats' | '_isTasksLoading' | '_searchForm';
 
 class TasksStore {
   constructor() {
@@ -11,6 +11,7 @@ class TasksStore {
       _tasks: observable,
       _tasksStats: observable,
       _isTasksLoading: observable,
+      _searchForm: observable,
 
       tasks: computed,
       isTasksLoading: computed,
@@ -28,59 +29,109 @@ class TasksStore {
     return this._isTasksLoading;
   }
 
-  private _tasks: TaskEntity[] = [];
+  private _tasks: TaskEntity[] | null = [];
 
-  get tasks(): TaskEntity[] {
+  get tasks(): TaskEntity[] | null {
     return this._tasks;
   }
 
-  private _tasksStats: TasksStatsEntity = {
+  private _tasksStats: TasksStatsEntity | null = {
     total: 0,
     important: 0,
     done: 0,
   };
 
-  get tasksStats(): TasksStatsEntity {
+  get tasksStats(): TasksStatsEntity | null {
     return this._tasksStats;
   }
 
+  private _searchForm?: SearchFormEntity = {
+    searchValue: '',
+    filterType: 'All',
+  };
+
+  getTasks = async (searchParams?: SearchFormEntity) => {
+    const externalSearchParams = mapToExternalParams(searchParams);
+    const res = await TaskAgentInstance.getAllTasks(externalSearchParams);
+    return {
+      tasks: mapToInternalTasks(res),
+      tasksStats: getInternalInfo(res),
+    };
+  };
+
   loadTasks = async (searchParams?: SearchFormEntity) => {
+    this._isTasksLoading = true;
     try {
-      this._isTasksLoading = true;
+      if (searchParams) this._searchForm = searchParams;
 
-      await fakeApi(1000);
+      const { tasks, tasksStats } = await this.getTasks(this._searchForm);
 
-      this._tasks = TasksMock;
-      this._tasksStats = TasksStatsMock;
+      this._tasks = tasks;
+      this._tasksStats = tasksStats;
     } catch {
-      console.log('Ошибка');
+      this._tasks = null;
+      this._tasksStats = null;
     } finally {
       this._isTasksLoading = false;
     }
   };
 
-  changeTaskImportance = (taskId: TaskEntity['id'], currentStatus: boolean) => {
+  changeTaskImportance = async (taskId: TaskEntity['id'], currentStatus: boolean) => {
     this._isTasksLoading = true;
 
-    console.log('important', taskId, !currentStatus);
+    try {
+      await TaskAgentInstance.updateTask(taskId, {
+        isImportant: !currentStatus,
+      });
 
-    this.loadTasks();
+      const { tasks, tasksStats } = await this.getTasks(this._searchForm);
+
+      this._tasks = tasks;
+      this._tasksStats = tasksStats;
+    } catch {
+      this._tasks = null;
+      this._tasksStats = null;
+    } finally {
+      this._isTasksLoading = false;
+    }
   };
 
-  makeTaskCompleted = (taskId: TaskEntity['id'], currentStatus: boolean) => {
+  makeTaskCompleted = async (taskId: TaskEntity['id'], currentStatus: boolean) => {
     this._isTasksLoading = true;
 
-    console.log('complete', taskId, !currentStatus);
+    try {
+      await TaskAgentInstance.updateTask(taskId, {
+        isCompleted: !currentStatus,
+        isImportant: currentStatus ? currentStatus : undefined,
+      });
 
-    this.loadTasks();
+      const { tasks, tasksStats } = await this.getTasks(this._searchForm);
+
+      this._tasks = tasks;
+      this._tasksStats = tasksStats;
+    } catch {
+      this._tasks = null;
+      this._tasksStats = null;
+    } finally {
+      this._isTasksLoading = false;
+    }
   };
 
-  deleteTask = (taskId: TaskEntity['id']) => {
+  deleteTask = async (taskId: TaskEntity['id']) => {
     this._isTasksLoading = true;
 
-    console.log('delete', taskId);
+    try {
+      await TaskAgentInstance.deleteTask(taskId);
+      const { tasks, tasksStats } = await this.getTasks(this._searchForm);
 
-    this.loadTasks();
+      this._tasks = tasks;
+      this._tasksStats = tasksStats;
+    } catch {
+      this._tasks = null;
+      this._tasksStats = null;
+    } finally {
+      this._isTasksLoading = false;
+    }
   };
 }
 

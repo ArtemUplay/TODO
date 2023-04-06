@@ -1,49 +1,37 @@
 import { action, computed, makeObservable, observable } from 'mobx';
-import { TaskEntity } from 'domains/index';
-import { fakeApi } from 'helpers/index';
+import { TaskAddFormEntity } from 'domains/index';
+import { TaskAgentInstance } from 'http/agent/index';
 
-type PrivateFields = '_isLoading' | '_taskId';
+type PrivateFields = '_isLoading';
 
 class AddTaskFormStore {
   constructor() {
     makeObservable<this, PrivateFields>(this, {
       _isLoading: observable,
-      _taskId: observable,
 
       isLoading: computed,
-      taskId: computed,
 
-      changeTaskImportance: action,
+      postNewTask: action,
     });
   }
 
   private _isLoading = false;
-  private _taskId = '0';
 
   get isLoading(): boolean {
     return this._isLoading;
   }
 
-  get taskId(): string {
-    return this._taskId;
-  }
+  postNewTask = async (data: TaskAddFormEntity) => {
+    this._isLoading = true;
 
-  set taskId(id) {
-    this._taskId = id;
-  }
-
-  //
-  changeTaskImportance(taskId: TaskEntity['id'], currentStatus: boolean) {
-    console.log('important', taskId, !currentStatus);
-  }
-
-  loadPage = async () => {
     try {
-      this._isLoading = true;
-
-      await fakeApi(1000);
-    } catch {
-      console.log('Ошибка');
+      await TaskAgentInstance.postTask({
+        isImportant: data.checkboxImportant,
+        name: data.taskName,
+        info: data.taskDescription,
+      });
+    } catch (error) {
+      console.log('Ошибка:', error);
     } finally {
       this._isLoading = false;
     }

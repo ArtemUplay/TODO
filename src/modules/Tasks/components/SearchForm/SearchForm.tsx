@@ -44,7 +44,6 @@ export const SearchFormProto = () => {
         searchValue: data.searchValue,
         filterType: data.filterType,
       });
-      reset();
     })();
   };
 
