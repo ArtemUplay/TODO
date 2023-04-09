@@ -1,7 +1,6 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 import { mapToInternalTaskEdit } from 'helpers/mappers';
 import { TaskEditFormEntity } from 'domains/index';
-import { fakeApi } from 'helpers/index';
 import { TaskAgentInstance } from 'http/agent';
 
 type PrivateFields = '_isLoading' | '_taskId' | '_taskForm';

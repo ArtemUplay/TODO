@@ -27,7 +27,7 @@ export const TaskDescription = styled(Typography)<TaskDescriptionProps>(({ isdon
 }));
 
 export const ImportantButton = styled(Button)<ImportantButtonProps>(({ isimportant }) => ({
-  backgroundColor: isimportant ? 'rgba(25, 118, 210, 0.7)' : 'transparent',
+  backgroundColor: isimportant == 'true' ? 'rgba(25, 118, 210, 0.7)' : 'transparent',
   minWidth: '0px',
   width: '35px',
   height: '35px',
