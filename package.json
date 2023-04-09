@@ -120,8 +120,11 @@
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
     "@hookform/resolvers": "2.9.9",
-    "@mui/material": "5.10.9",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.10.9",
     "@mui/system": "5.10.9",
     "@mui/x-data-grid": "5.17.7",
     "@mui/x-date-pickers": "5.0.4",

@@ -1,17 +1,20 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { PageContainer } from 'components/index';
+import { Box, Typography } from '@mui/material';
+import { AddTaskButton } from './TasksPage.styles';
 import { Tasks } from 'modules/index';
 import { PATH_LIST } from 'constants/index';
 
 export function TasksPage() {
   return (
-    <PageContainer>
-      <h1>TODO LIST</h1>
+    <Box width={'900px'} margin={'0 auto'}>
+      <Typography variant="h2" component="h1" textAlign={'center'}>
+        TODO LIST
+      </Typography>
       <Tasks />
-      <Link className="btn btn-secondary d-block ml-auto" to={PATH_LIST.ADD}>
-        Add task
+
+      <Link to={PATH_LIST.ADD} color="secondary">
+        <AddTaskButton component={'a'}>Add task</AddTaskButton>
       </Link>
-    </PageContainer>
+    </Box>
   );
 }

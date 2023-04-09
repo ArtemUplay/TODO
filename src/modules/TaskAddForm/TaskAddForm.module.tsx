@@ -1,11 +1,12 @@
-import { FormEvent, useCallback } from 'react';
+import { ChangeEventHandler, FormEvent, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import { useNavigate } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { TextField, Checkbox, FormControlLabel, Box, CircularProgress } from '@mui/material';
 import { AddTaskFormStoreInstance } from './store/index';
-import { validationSchema } from './TaskAddForm.schema';
-import { TextField, Checkbox, Loader } from 'components/index';
+import { validationSchema } from './TaskAddForm.validation';
+import { AddTaskButton } from './TaskAddForm.styles';
 import { ROOT } from 'constants/index';
 import { TaskAddFormEntity } from 'domains/index';
 
@@ -24,16 +25,16 @@ const AddTaskFormProto = () => {
     resolver: yupResolver(validationSchema),
   });
 
-  const onInputTaskName = useCallback((value: string) => {
-    setValue('taskName', value);
+  const onInputTaskName: ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = useCallback((evt) => {
+    setValue('taskName', evt.target.value);
   }, []);
 
-  const onInputTaskDescription = useCallback((value: string) => {
-    setValue('taskDescription', value);
+  const onInputTaskDescription: ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = useCallback((evt) => {
+    setValue('taskDescription', evt.target.value);
   }, []);
 
-  const onChangeImportantCheckboxValue = useCallback((isChecked: boolean) => {
-    setValue('checkboxImportant', isChecked);
+  const onChangeImportantCheckboxValue: ChangeEventHandler<HTMLInputElement> = useCallback((evt) => {
+    setValue('checkboxImportant', evt.target.checked);
   }, []);
 
   const submitHandler = (evt: FormEvent<HTMLFormElement>) => {
@@ -46,55 +47,55 @@ const AddTaskFormProto = () => {
   };
 
   return (
-    <form className="edit-form d-flex flex-column align-items-center justify-content-center" onSubmit={submitHandler}>
-      <Loader isLoading={isLoading} variant="circle">
-        <Controller
-          control={control}
-          name="taskName"
-          render={({ field, fieldState: { error } }) => (
-            <>
+    <Box component={'form'} display={'flex'} flexDirection={'column'} gap={'20px'} onSubmit={submitHandler}>
+      {isLoading ? (
+        <CircularProgress />
+      ) : (
+        <>
+          <Controller
+            control={control}
+            name="taskName"
+            render={({ field, fieldState: { error } }) => (
               <TextField
-                inputType="text"
                 value={field.value}
+                variant="standard"
                 label="Task name"
+                helperText={error?.message}
                 placeholder="Clean room"
                 onChange={onInputTaskName}
-                isInvalid={error?.message ? 'is-invalid' : ''}
+                error={error?.message ? true : false}
               />
-              <span className="text-danger align-self-start">{error?.message}</span>
-            </>
-          )}
-        />
-        <Controller
-          control={control}
-          name="taskDescription"
-          render={({ field, fieldState: { error } }) => (
-            <>
+            )}
+          />
+          <Controller
+            control={control}
+            name="taskDescription"
+            render={({ field, fieldState: { error } }) => (
               <TextField
-                inputType="text"
-                label={'What to do(description)'}
+                label="What to do(description)"
                 value={field.value}
                 placeholder="Clean my room"
+                variant="standard"
                 onChange={onInputTaskDescription}
-                isInvalid={error?.message ? 'is-invalid' : ''}
+                helperText={error?.message}
+                error={error?.message ? true : false}
               />
-              <span className="text-danger align-self-start">{error?.message}</span>
-            </>
-          )}
-        />
-        <Controller
-          control={control}
-          name="checkboxImportant"
-          render={({ field }) => (
-            <Checkbox label="Important" checked={field.value} onChange={onChangeImportantCheckboxValue} />
-          )}
-        />
-
-        <button type="submit" className="btn btn-secondary d-block edit-task-button w-100">
-          Add task
-        </button>
-      </Loader>
-    </form>
+            )}
+          />
+          <Controller
+            control={control}
+            name="checkboxImportant"
+            render={({ field }) => (
+              <FormControlLabel
+                control={<Checkbox checked={field.value} onChange={onChangeImportantCheckboxValue} />}
+                label="Important"
+              />
+            )}
+          />
+          <AddTaskButton type="submit">Add task</AddTaskButton>
+        </>
+      )}
+    </Box>
   );
 };
 

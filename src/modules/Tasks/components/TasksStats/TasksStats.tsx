@@ -1,38 +1,34 @@
-import React from 'react';
 import { observer } from 'mobx-react';
+import { Box } from '@mui/system';
+import { CircularProgress, Typography } from '@mui/material';
+import { StyledContainer } from './TaskStats.styles';
 import { TasksStoreInstance } from 'modules/Tasks/store/index';
-import { Loader } from 'components/index';
 
 export function TasksStatsProto() {
   const { tasksStats, isTasksLoading } = TasksStoreInstance;
 
   return (
-    <div className="d-flex w-100 justify-content-between">
+    <StyledContainer>
       {tasksStats ? (
         <>
-          <p>
-            Total:{' '}
-            <Loader isLoading={isTasksLoading} variant="circle">
-              <span className="badge bg-secondary">{tasksStats?.total}</span>
-            </Loader>
-          </p>
-          <p>
-            Important:{' '}
-            <Loader isLoading={isTasksLoading} variant="circle">
-              <span className="badge bg-secondary">{tasksStats?.important}</span>
-            </Loader>
-          </p>
-          <p>
-            Done:{' '}
-            <Loader isLoading={isTasksLoading} variant="circle">
-              <span className="badge bg-secondary">{tasksStats?.done}</span>
-            </Loader>
-          </p>
+          <Box>
+            {isTasksLoading ? <CircularProgress /> : <Typography variant="h6">Total: {tasksStats?.total}</Typography>}
+          </Box>
+          <Box>
+            {isTasksLoading ? (
+              <CircularProgress />
+            ) : (
+              <Typography variant="h6">Important: {tasksStats?.important}</Typography>
+            )}
+          </Box>
+          <Box>
+            {isTasksLoading ? <CircularProgress /> : <Typography variant="h6">Done: {tasksStats?.done}</Typography>}
+          </Box>
         </>
       ) : (
-        <p>Статы не найдены</p>
+        <Typography variant="h5">Статы не найдены</Typography>
       )}
-    </div>
+    </StyledContainer>
   );
 }
 

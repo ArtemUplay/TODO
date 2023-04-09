@@ -1,6 +1,20 @@
 import { Link } from 'react-router-dom';
+import { Box } from '@mui/system';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import CheckIcon from '@mui/icons-material/Check';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { TaskProps } from './Task.types';
 import './Task.css';
+import {
+  ListItemWrapper,
+  TaskName,
+  TaskDescription,
+  ImportantButton,
+  DoneButton,
+  DeleteButton,
+  EditButton,
+} from './Task.styles';
 import { EDIT, ROOT } from 'constants/index';
 
 export function Task({ task, changeTaskImportance, deleteTask, makeTaskCompleted }: TaskProps) {
@@ -11,51 +25,40 @@ export function Task({ task, changeTaskImportance, deleteTask, makeTaskCompleted
   const onBtnCompleteClick = () => makeTaskCompleted(id, isDone);
 
   return (
-    <div>
-      <div className="task mb-2">
-        <p
-          className={`task__label ${isDone ? 'text-decoration-line-through text-secondary' : ''} ${
-            isImportant ? 'text-success fw-bold' : ''
-          }`}>
+    <ListItemWrapper>
+      <Box display={'flex'} justifyContent={'space-between'} flexBasis={'100%'}>
+        {/* React выкидывает предупреждение, что isImportant не является булевым значением, поэтому пришлось применить метод toString() */}
+        <TaskName isdone={isDone.toString()} isimportant={isImportant.toString()}>
           {name}
-        </p>
+        </TaskName>
 
-        <div className="task__btns">
-          <button
+        <Box display={'flex'} gap={'5px'}>
+          <ImportantButton
             type="button"
-            className={`task__btn btn ${
-              isImportant ? 'btn-success' : 'btn-outline-success'
-            } btn-sm float-right btn-important`}
+            isimportant={isImportant.toString()}
             disabled={isDone}
             onClick={onBtnImportantClick}>
-            <i className="fa fa-exclamation" />
-          </button>
+            <PriorityHighIcon />
+          </ImportantButton>
 
-          <button
-            type="button"
-            className={`task__btn btn ${isDone ? 'btn-danger' : 'btn-outline-danger'} btn-sm float-right`}
-            onClick={onBtnCompleteClick}>
-            <i className="fa fa-check" />
-          </button>
+          <DoneButton type="button" isdone={isDone.toString()} onClick={onBtnCompleteClick}>
+            <CheckIcon />
+          </DoneButton>
 
-          <button
-            type="button"
-            className="task__btn btn btn-outline-danger btn-sm float-right btn-delete"
-            onClick={onBtnDeleteClick}>
-            <i className="fa fa-trash-o" />
-          </button>
+          <DeleteButton type="button" onClick={onBtnDeleteClick}>
+            <DeleteIcon />
+          </DeleteButton>
 
-          <Link className="task__btn btn btn-outline-secondary btn-sm float-right" to={`${ROOT}${EDIT}/${id}`}>
-            <i className="fa fa-pencil" />
-          </Link>
-        </div>
-      </div>
-      <p
-        className={`${isDone ? 'text-decoration-line-through text-secondary' : ''} ${
-          isImportant ? 'text-success fw-bold' : ''
-        }`}>
+          <EditButton>
+            <Link to={`${ROOT}${EDIT}/${id}`}>
+              <EditIcon />
+            </Link>
+          </EditButton>
+        </Box>
+      </Box>
+      <TaskDescription isdone={isDone.toString()} isimportant={isImportant.toString()}>
         {info}
-      </p>
-    </div>
+      </TaskDescription>
+    </ListItemWrapper>
   );
 }

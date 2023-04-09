@@ -1,11 +1,13 @@
-import { PageContainer } from 'components/index';
+import { Box, Typography } from '@mui/material';
 import { AddTaskForm } from 'modules/index';
 
 export const AddTaskPage = () => {
   return (
-    <PageContainer>
-      <h1>Add task page</h1>
+    <Box width={'900px'} margin={'0 auto'}>
+      <Typography variant="h2" component="h1" textAlign={'center'}>
+        Add task page
+      </Typography>
       <AddTaskForm />
-    </PageContainer>
+    </Box>
   );
 };

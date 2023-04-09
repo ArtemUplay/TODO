@@ -1,11 +1,13 @@
-import { PageContainer } from 'components/index';
+import { Box, Typography } from '@mui/material';
 import { TaskEditForm } from 'modules/index';
 
 export const TaskEditPage = () => {
   return (
-    <PageContainer>
-      <h1 className="text-center">EDIT TASK</h1>
+    <Box width={'900px'} margin={'0 auto'}>
+      <Typography variant="h2" component="h1" textAlign={'center'}>
+        EDIT TASK
+      </Typography>
       <TaskEditForm />
-    </PageContainer>
+    </Box>
   );
 };

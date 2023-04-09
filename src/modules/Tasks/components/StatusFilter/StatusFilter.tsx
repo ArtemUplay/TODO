@@ -1,6 +1,7 @@
 import { MouseEvent, memo } from 'react';
+import { Button, ButtonGroup } from '@mui/material';
 import { StatusFilterProps } from './StatusFilter.types';
-import { CLASSNAMES } from './StatusFilter.constants';
+import { VARIANT } from './StatusFilter.constants';
 import { FILTER_TYPES } from 'constants/index';
 import { FiltersType } from 'domains/index';
 
@@ -10,20 +11,20 @@ const StatusFilterProto = ({ onChange, tasksType, disabled }: StatusFilterProps)
   };
 
   return (
-    <div className="bnt-group" onClick={onFilterChange}>
-      <button type="button" className={tasksType === FILTER_TYPES.ALL ? CLASSNAMES.ACTIVE : CLASSNAMES.SECONDARY}>
+    <ButtonGroup onClick={onFilterChange}>
+      <Button type="button" variant={tasksType === FILTER_TYPES.ALL ? VARIANT.ACTIVE : VARIANT.SECONDARY}>
         {FILTER_TYPES.ALL}
-      </button>
-      <button type="button" className={tasksType === FILTER_TYPES.ACTIVE ? CLASSNAMES.ACTIVE : CLASSNAMES.SECONDARY}>
+      </Button>
+      <Button type="button" variant={tasksType === FILTER_TYPES.ACTIVE ? VARIANT.ACTIVE : VARIANT.SECONDARY}>
         {FILTER_TYPES.ACTIVE}
-      </button>
-      <button type="button" className={tasksType === FILTER_TYPES.DONE ? CLASSNAMES.ACTIVE : CLASSNAMES.SECONDARY}>
+      </Button>
+      <Button type="button" variant={tasksType === FILTER_TYPES.DONE ? VARIANT.ACTIVE : VARIANT.SECONDARY}>
         {FILTER_TYPES.DONE}
-      </button>
-      <button type="button" className={tasksType === FILTER_TYPES.IMPORTANT ? CLASSNAMES.ACTIVE : CLASSNAMES.SECONDARY}>
+      </Button>
+      <Button type="button" variant={tasksType === FILTER_TYPES.IMPORTANT ? VARIANT.ACTIVE : VARIANT.SECONDARY}>
         {FILTER_TYPES.IMPORTANT}
-      </button>
-    </div>
+      </Button>
+    </ButtonGroup>
   );
 };
 

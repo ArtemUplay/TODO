@@ -1,13 +1,14 @@
-import { FormEvent, useCallback, useEffect } from 'react';
+import { FormEvent, useCallback, useEffect, ChangeEventHandler } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Box, Checkbox, CircularProgress, FormControlLabel, TextField, Typography } from '@mui/material';
 import { ParamsType } from './TaskEditForm.types';
 import { TaskEditFormStoreInstance } from './store';
-import { validationSchema } from './TaskEditForm.shcema';
+import { validationSchema } from './TaskEditForm.validation';
 import { defaultValues } from './TaskEditForm.constants';
-import { TextField, Checkbox, Loader } from 'components/index';
+import { EditTaskButton } from './TaskEditForm.styles';
 import { ROOT } from 'constants/index';
 import { TaskEditFormEntity } from 'domains/index';
 
@@ -32,20 +33,20 @@ const TaskEditFormProto = () => {
 
   const navigate = useNavigate();
 
-  const onInputTaskName = useCallback((value: string) => {
-    setValue('name', value);
+  const onInputTaskName: ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = useCallback((evt) => {
+    setValue('name', evt.target.value);
   }, []);
 
-  const onInputTaskDescription = useCallback((value: string) => {
-    setValue('info', value);
+  const onInputTaskDescription: ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = useCallback((evt) => {
+    setValue('info', evt.target.value);
   }, []);
 
-  const onChangeImportantCheckboxValue = useCallback((isChecked: boolean) => {
-    setValue('isImportant', isChecked);
+  const onChangeImportantCheckboxValue: ChangeEventHandler<HTMLInputElement> = useCallback((evt) => {
+    setValue('isImportant', evt.target.checked);
   }, []);
 
-  const onChangeCompletedCheckboxValue = useCallback((isChecked: boolean) => {
-    setValue('isCompleted', isChecked);
+  const onChangeCompletedCheckboxValue: ChangeEventHandler<HTMLInputElement> = useCallback((evt) => {
+    setValue('isCompleted', evt.target.checked);
   }, []);
 
   const submitHandler = (evt: FormEvent<HTMLFormElement>) => {
@@ -58,75 +59,75 @@ const TaskEditFormProto = () => {
   };
 
   return (
-    <form className="edit-form d-flex flex-column align-items-center justify-content-center" onSubmit={submitHandler}>
-      <Loader isLoading={isLoading} variant="circle">
-        {taskForm ? (
-          <>
-            <Controller
-              control={control}
-              name="name"
-              render={({ field, fieldState: { error } }) => (
-                <>
-                  <TextField
-                    inputType="text"
-                    value={field.value}
-                    label="Task name"
-                    placeholder="Clean room"
-                    onChange={onInputTaskName}
-                    isInvalid={error?.message ? 'is-invalid' : ''}
+    <Box component={'form'} display={'flex'} flexDirection={'column'} gap={'20px'} onSubmit={submitHandler}>
+      {isLoading ? (
+        <CircularProgress />
+      ) : taskForm ? (
+        <>
+          <Controller
+            control={control}
+            name="name"
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                value={field.value}
+                label="Task name"
+                error={error?.message ? true : false}
+                variant="standard"
+                placeholder="Clean room"
+                onChange={onInputTaskName}
+                helperText={error?.message}
+              />
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="info"
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                value={field.value}
+                error={error?.message ? true : false}
+                label={'What to do(description)'}
+                placeholder="Clean my room"
+                variant="standard"
+                onChange={onInputTaskDescription}
+                helperText={error?.message}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="isImportant"
+            render={({ field }) => (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={field.value}
+                    onChange={onChangeImportantCheckboxValue}
+                    disabled={watch('isCompleted')}
                   />
-                  <span className="text-danger align-self-start">{error?.message}</span>
-                </>
-              )}
-            />
+                }
+                label="Important"
+              />
+            )}
+          />
 
-            <Controller
-              control={control}
-              name="info"
-              render={({ field, fieldState: { error } }) => (
-                <>
-                  <TextField
-                    inputType="text"
-                    value={field.value}
-                    label={'What to do(description)'}
-                    placeholder="Clean my room"
-                    onChange={onInputTaskDescription}
-                    isInvalid={error?.message ? 'is-invalid' : ''}
-                  />
-                  <span className="text-danger align-self-start">{error?.message}</span>
-                </>
-              )}
-            />
-            <Controller
-              control={control}
-              name="isImportant"
-              render={({ field }) => (
-                <Checkbox
-                  label="Important"
-                  checked={field.value}
-                  onChange={onChangeImportantCheckboxValue}
-                  disabled={watch('isCompleted')}
-                />
-              )}
-            />
-
-            <Controller
-              control={control}
-              name="isCompleted"
-              render={({ field }) => (
-                <Checkbox label="Completed" checked={field.value} onChange={onChangeCompletedCheckboxValue} />
-              )}
-            />
-
-            <button type="submit" className="btn btn-secondary d-block edit-task-button w-100">
-              Edit task
-            </button>
-          </>
-        ) : (
-          <p>Not found</p>
-        )}
-      </Loader>
-    </form>
+          <Controller
+            control={control}
+            name="isCompleted"
+            render={({ field }) => (
+              <FormControlLabel
+                control={<Checkbox checked={field.value} onChange={onChangeCompletedCheckboxValue} />}
+                label="Completed"
+              />
+            )}
+          />
+          <EditTaskButton type="submit">Edit task</EditTaskButton>
+        </>
+      ) : (
+        <Typography variant="h5">Not found</Typography>
+      )}
+    </Box>
   );
 };
 

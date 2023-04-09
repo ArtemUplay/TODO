@@ -1,4 +1,4 @@
-export const CLASSNAMES = {
-  ACTIVE: 'btn btn-info',
-  SECONDARY: 'btn btn-outline-secondary',
+export const VARIANT = {
+  ACTIVE: 'contained' as const,
+  SECONDARY: 'outlined' as const,
 };
