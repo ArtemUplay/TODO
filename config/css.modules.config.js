@@ -1,5 +1,5 @@
-const loaderUtils = require('loader-utils');
 const path = require('path');
+const loaderUtils = require('loader-utils');
 
 module.exports = function getLocalIdent(context, localIdentName, localName, options) {
   // Use the filename or folder name, based on some uses the index.js / index.module.(css|scss|sass) project style
