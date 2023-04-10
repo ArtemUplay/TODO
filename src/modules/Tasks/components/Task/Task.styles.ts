@@ -14,15 +14,15 @@ export const ListItemWrapper = styled(Box)(() => ({
 
 export const TaskName = styled(Typography)<TaskNameProps>(({ isdone, isimportant }) => ({
   fontSize: '18px',
-  fontWeight: isimportant ? '700' : '',
-  color: isdone == 'true' ? '#ccc' : isimportant ? 'rgb(25, 118, 210)' : '',
+  fontWeight: isimportant == 'true' ? '700' : '',
+  color: isdone == 'true' ? '#ccc' : isimportant == 'true' ? 'rgb(25, 118, 210)' : '',
   textDecoration: isdone == 'true' ? 'line-through' : 'none',
 }));
 
 export const TaskDescription = styled(Typography)<TaskDescriptionProps>(({ isdone, isimportant }) => ({
   fontSize: '16px',
-  fontWeight: isimportant ? '600' : '',
-  color: isdone == 'true' ? '#ccc' : isimportant ? 'rgb(25, 118, 210)' : '',
+  fontWeight: isimportant == 'true' ? '600' : '',
+  color: isdone == 'true' ? '#ccc' : isimportant == 'true' ? 'rgb(25, 118, 210)' : '',
   textDecoration: isdone == 'true' ? 'line-through' : 'none',
 }));
 

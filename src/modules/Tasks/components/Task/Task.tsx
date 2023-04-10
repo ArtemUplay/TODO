@@ -5,7 +5,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { TaskProps } from './Task.types';
-import './Task.css';
 import {
   ListItemWrapper,
   TaskName,
