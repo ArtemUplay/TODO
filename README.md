@@ -1,8 +1,6 @@
 # React todo project
-npm run dev - запустить проект
 
-## Пример итогового проекта
-https://todo-liga-internship.vercel.app/
+npm run dev - запустить проект
 
 ## Технологии которые используются в проекте
 
@@ -59,4 +57,4 @@ Webpack, eslint, prettier
 └── README.md
 ```
 
-
+### Сервер отключен
